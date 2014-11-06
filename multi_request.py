@@ -15,16 +15,16 @@ def main():
         UrlQ.add("http://www.amazon.com/")
         UrlQ.add("http://www.newyorker.com/")
 
-    RequestURls(UrlQ, 1)
+    RequestURls(UrlQ, Requester, 15)
 
 
 
-def RequestURls(UrlQ, NumberOfThreads=10):
+def RequestURls(UrlQ, fun, NumberOfThreads=10):
     threads = []
     HtmlQ = Queue()
 
     for x in xrange(0, NumberOfThreads):
-        threads.append(Thread(target=Requester, args=(UrlQ, HtmlQ)))
+        threads.append(Thread(target=fun, args=(UrlQ, HtmlQ)))
 
     for thread in threads:
         thread.start()
@@ -37,7 +37,7 @@ def Requester(UrlQ, HtmlQ):
     while not UrlQ.is_empty():
         try:
             Url = UrlQ.remove()
-            print requests.get(Url)
+            HtmlQ.add(requests.get(Url))
         except:
             print "Request Failed: " + Url
 
